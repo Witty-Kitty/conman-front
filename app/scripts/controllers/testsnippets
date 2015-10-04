@@ -1,0 +1,256 @@
+describe('PhoneListCtrl', function(){
+
+it('should create "phones" model with 3 phones', function() {
+  var scope = {},
+      ctrl = new PhoneListCtrl(scope);
+
+  expect(scope.phones.length).toBe(3);
+});
+
+});
+
+
+
+describe('PhoneCat App', function() {
+
+describe('Phone list view', function() {
+
+  beforeEach(function() {
+    browser.get('app/index.html');
+  });
+
+
+  it('should filter the phone list as a user types into the search box', function() {
+
+    var phoneList = element.all(by.repeater('phone in phones'));
+    var query = element(by.model('query'));
+
+    expect(phoneList.count()).toBe(3);
+
+    query.sendKeys('nexus');
+    expect(phoneList.count()).toBe(1);
+
+    query.clear();
+    query.sendKeys('motorola');
+    expect(phoneList.count()).toBe(2);
+  });
+});
+});
+
+
+
+describe('PhoneCat controllers', function() {
+
+describe('PhoneListCtrl', function(){
+  var scope, ctrl;
+
+  beforeEach(module('phonecatApp'));
+
+  beforeEach(inject(function($controller) {
+    scope = {};
+    ctrl = $controller('PhoneListCtrl', {$scope:scope});
+  }));
+
+  it('should create "phones" model with 3 phones', function() {
+    expect(scope.phones.length).toBe(3);
+  });
+
+
+  it('should set the default value of orderProp model', function() {
+    expect(scope.orderProp).toBe('age');
+  });
+});
+});
+
+
+describe('PhoneCat controllers', function() {
+
+describe('PhoneListCtrl', function(){
+  var scope, ctrl, $httpBackend;
+
+  // Load our app module definition before each test.
+  beforeEach(module('phonecatApp'));
+
+  // The injector ignores leading and trailing underscores here (i.e. _$httpBackend_).
+  // This allows us to inject a service but then attach it to a variable
+  // with the same name as the service in order to avoid a name conflict.
+  beforeEach(inject(function(_$httpBackend_, $rootScope, $controller) {
+    $httpBackend = _$httpBackend_;
+    $httpBackend.expectGET('phones/phones.json').
+        respond([{name: 'Nexus S'}, {name: 'Motorola DROID'}]);
+
+    scope = $rootScope.$new();
+    ctrl = $controller('PhoneListCtrl', {$scope: scope});
+  }));
+
+
+  it('should redirect index.html to index.html#/phones', function() {
+  browser.get('app/index.html');
+  browser.getLocationAbsUrl().then(function(url) {
+      expect(url.split('#')[1]).toBe('/phones');
+    });
+});
+
+describe('Phone list view', function() {
+  beforeEach(function() {
+    browser.get('app/index.html#/phones');
+  });
+...
+
+describe('Phone detail view', function() {
+
+  beforeEach(function() {
+    browser.get('app/index.html#/phones/nexus-s');
+  });
+
+
+  it('should display placeholder page with phoneId', function() {
+    expect(element(by.binding('phoneId')).getText()).toBe('nexus-s');
+  });
+});
+
+
+
+
+beforeEach(module('phonecatApp'));
+
+...
+
+describe('PhoneDetailCtrl', function(){
+  var scope, $httpBackend, ctrl;
+
+  beforeEach(inject(function(_$httpBackend_, $rootScope, $routeParams, $controller) {
+    $httpBackend = _$httpBackend_;
+    $httpBackend.expectGET('phones/xyz.json').respond({name:'phone xyz'});
+
+    $routeParams.phoneId = 'xyz';
+    scope = $rootScope.$new();
+    ctrl = $controller('PhoneDetailCtrl', {$scope: scope});
+  }));
+
+
+  it('should fetch phone detail', function() {
+    expect(scope.phone).toBeUndefined();
+    $httpBackend.flush();
+
+    expect(scope.phone).toEqual({name:'phone xyz'});
+  });
+});
+...
+
+
+
+
+describe('filter', function() {
+
+beforeEach(module('phonecatFilters'));
+
+describe('checkmark', function() {
+
+  it('should convert boolean values to unicode checkmark or cross',
+      inject(function(checkmarkFilter) {
+    expect(checkmarkFilter(true)).toBe('\u2713');
+    expect(checkmarkFilter(false)).toBe('\u2718');
+  }));
+});
+});
+
+
+
+...
+describe('Phone detail view', function() {
+
+...
+
+  it('should display the first phone image as the main phone image', function() {
+    expect(element(by.css('img.phone')).getAttribute('src')).toMatch(/img\/phones\/nexus-s.0.jpg/);
+  });
+
+
+  it('should swap main image if a thumbnail image is clicked on', function() {
+    element(by.css('.phone-thumbs li:nth-child(3) img')).click();
+    expect(element(by.css('img.phone')).getAttribute('src')).toMatch(/img\/phones\/nexus-s.2.jpg/);
+
+    element(by.css('.phone-thumbs li:nth-child(1) img')).click();
+    expect(element(by.css('img.phone')).getAttribute('src')).toMatch(/img\/phones\/nexus-s.0.jpg/);
+  });
+});
+
+
+
+
+
+describe('PhoneCat controllers', function() {
+
+beforeEach(function(){
+  this.addMatchers({
+    toEqualData: function(expected) {
+      return angular.equals(this.actual, expected);
+    }
+  });
+});
+
+beforeEach(module('phonecatApp'));
+beforeEach(module('phonecatServices'));
+
+
+describe('PhoneListCtrl', function(){
+  var scope, ctrl, $httpBackend;
+
+  beforeEach(inject(function(_$httpBackend_, $rootScope, $controller) {
+    $httpBackend = _$httpBackend_;
+    $httpBackend.expectGET('phones/phones.json').
+        respond([{name: 'Nexus S'}, {name: 'Motorola DROID'}]);
+
+    scope = $rootScope.$new();
+    ctrl = $controller('PhoneListCtrl', {$scope: scope});
+  }));
+
+
+  it('should create "phones" model with 2 phones fetched from xhr', function() {
+    expect(scope.phones).toEqualData([]);
+    $httpBackend.flush();
+
+    expect(scope.phones).toEqualData(
+        [{name: 'Nexus S'}, {name: 'Motorola DROID'}]);
+  });
+
+
+  it('should set the default value of orderProp model', function() {
+    expect(scope.orderProp).toBe('age');
+  });
+});
+
+
+describe('PhoneDetailCtrl', function(){
+  var scope, $httpBackend, ctrl,
+      xyzPhoneData = function() {
+        return {
+          name: 'phone xyz',
+          images: ['image/url1.png', 'image/url2.png']
+        }
+      };
+
+
+  beforeEach(inject(function(_$httpBackend_, $rootScope, $routeParams, $controller) {
+    $httpBackend = _$httpBackend_;
+    $httpBackend.expectGET('phones/xyz.json').respond(xyzPhoneData());
+
+    $routeParams.phoneId = 'xyz';
+    scope = $rootScope.$new();
+    ctrl = $controller('PhoneDetailCtrl', {$scope: scope});
+  }));
+
+
+  it('should fetch phone detail', function() {
+    expect(scope.phone).toEqualData({});
+    $httpBackend.flush();
+
+    expect(scope.phone).toEqualData(xyzPhoneData());
+  });
+});
+});
+
+
+
+

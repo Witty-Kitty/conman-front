@@ -1,0 +1,19 @@
+<div class="container">
+    <h1>CREATE CONTACT</h1>
+    <form>
+
+        <h3>First Name</h3>
+        <p><input type="text" ng-model="contact.first_name"></p>
+        <h3>Last Name</h3>
+        <p><input type="text" ng-model="contact.last_name" ></p>
+        <h3>Email</h3>
+        <p><input type="text"  ng-model="contact.email_address" ></p>
+        <h3>Twitter</h3>
+        <p><input type="text"  ng-model="contact.twitter" ></p>
+        <!--<a href="#/contacts/{{contact.id}}">save</a>-->
+        <button ng-click="create()">Create</button>
+        <!--<input type="submit" Value="Update">-->
+    </form>
+
+
+</div>

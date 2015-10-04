@@ -1,0 +1,11 @@
+<div class="container" >
+    <h1>ARCHIVED CONTACTS</h1>
+
+    <table ng-repeat="contact in contacts">
+        <tr><td>{{contact.id}}</td><td>{{contact.first_name}}</td></tr>
+        <tr> <td></td>
+
+        <td><a href="#/archived/restore/{{contact.id}}">restore</a></td></tr>
+
+    </table>
+    </div>
